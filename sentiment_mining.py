@@ -14,7 +14,6 @@ for w in movie_reviews.words():
     all_words.append(w.lower())
 
 all_words = nltk.FreqDist(all_words)
-#print(all_words.most_common())
 
 word_features = list(all_words.keys())[:1000]
 
