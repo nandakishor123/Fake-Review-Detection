@@ -5,25 +5,33 @@ from sklearn.feature_extraction.text import CountVectorizer
 import csv
 
 def to_lower(text):
+    sentence = []
     for w in text:
-        sentence = w.lower()
+        sentence += w.lower()
     return sentence
 
 def remove_stopwords(sentence):
     word_tokens = []
     stop_words = set(stopwords.words('english'))
-    word_tokens = word_tokenize(sentence)
+    for text in sentence:
+        word_tokens += word_tokenize(text)
     filtered_sentence = []
     for w in word_tokens:
-        if w not in stop_words:
-            filtered_sentence.append(w)
+        text = ''
+        for word in w:
+            if w not in stop_words:
+                text += w + ' '
+        filtered_sentence += text
     return filtered_sentence
 
 def nonletter_removal(sentence):
     filtered_sentence = []
     for i in sentence:
-        if i.isalpha():
-            filtered_sentence.append(i)
+        text = ''
+        for char in i:
+            if char.isalpha():
+                text += char
+        filtered_sentence+=text
     return filtered_sentence
 
 def getNgrams(filtered_sentence,n):
@@ -58,6 +66,6 @@ token = []
 with open('reviews.csv','r') as f:
     reader = csv.reader(f)
     for row in reader:
-        token = list(row)
+        token += list(row)
     pre_processing(token)
 f.close()
