@@ -4,34 +4,34 @@ import pandas as pa
 from sklearn.feature_extraction.text import CountVectorizer
 import csv
 
-def to_lower(text):
-    sentence = []
-    for w in text:
-        sentence += w.lower()
-    return sentence
+def to_lower(sentence):
+    filtered_sentence = []
+    for text in sentence:
+        temp = []
+        for w in word_tokenize(text):
+            temp.append(w.lower())
+        filtered_sentence.append(' '.join(temp))
+    return filtered_sentence
 
 def remove_stopwords(sentence):
-    word_tokens = []
     stop_words = set(stopwords.words('english'))
-    for text in sentence:
-        word_tokens += word_tokenize(text)
     filtered_sentence = []
-    for w in word_tokens:
-        text = ''
-        for word in w:
+    for text in sentence:
+        temp = []
+        for w in word_tokenize(text):
             if w not in stop_words:
-                text += w + ' '
-        filtered_sentence += text
+                temp.append(w)
+        filtered_sentence.append(' '.join(temp))
     return filtered_sentence
 
 def nonletter_removal(sentence):
     filtered_sentence = []
-    for i in sentence:
-        text = ''
-        for char in i:
-            if char.isalpha():
-                text += char
-        filtered_sentence+=text
+    for text in sentence:
+        temp = []
+        for w in word_tokenize(text):
+            if w.isalpha():
+                temp.append(w)
+        filtered_sentence.append(' '.join(temp))
     return filtered_sentence
 
 def getNgrams(filtered_sentence,n):
@@ -50,22 +50,26 @@ def getNgrams(filtered_sentence,n):
     return
 
 def NumericalFeatureVector(processed_text):
-    vectorizer = CountVectorizer()
-    vectorizer.fit(processed_text)
-    vector = vectorizer.transform(processed_text)
-    numerical_feature_vectors = vector.toarray()
+    for word in processed_text:
+        for w in word:
+            vectorizer = CountVectorizer()
+            vectorizer.fit(w)
+            vector = vectorizer.transform(w)
+            numerical_feature_vectors = vector.toarray()
 
 def pre_processing(data):
     sentence = to_lower(data)
     sentence = nonletter_removal(sentence)
     filtered_sentence = remove_stopwords(sentence)
-    getNgrams(filtered_sentence,2)
+    #getNgrams(filtered_sentence,2)
     NumericalFeatureVector(filtered_sentence)
 
 token = []
 with open('reviews.csv','r') as f:
     reader = csv.reader(f)
-    for row in reader:
-        token += list(row)
+    for i in range(5):
+        row = f.readline()
+        token.append(row)
+        print("\n\n",row)
     pre_processing(token)
 f.close()
